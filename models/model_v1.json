@@ -1,0 +1,53 @@
+{
+  "version_modele": "v1",
+  "date_entrainement": "2026-11-22",
+  "graine": 42,
+  "variables": [
+    "age",
+    "revenu_mensuel",
+    "montant_credit",
+    "duree_mois",
+    "anciennete_activite",
+    "charge_mensuelle"
+  ],
+  "seuil": 0.285868,
+  "rappel_min_vise": 0.85,
+  "metriques_validation": {
+    "rappel": 0.8519,
+    "precision": 0.2352,
+    "f1": 0.3686
+  },
+  "domaine_entrainement": {
+    "age": [
+      18.0,
+      70.0
+    ],
+    "revenu_mensuel": [
+      50000.0,
+      1224000.0
+    ],
+    "montant_credit": [
+      70000.0,
+      9790000.0
+    ],
+    "duree_mois": [
+      6.0,
+      48.0
+    ],
+    "anciennete_activite": [
+      0.0,
+      24.9
+    ]
+  },
+  "tailles": {
+    "train": 6000,
+    "validation": 2000
+  },
+  "donnees_sha256": "8742ca4c60965f0b21e9ee0d43eb007a3c8928a6eb542185728470495c8ecbba",
+  "bibliotheques": {
+    "python": "3.14.4",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.5",
+    "pandas": "3.1.1"
+  }
+}
