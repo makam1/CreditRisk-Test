@@ -97,3 +97,12 @@ def test_dossier_vers_dataframe_une_ligne():
     df = dossier_vers_dataframe(DOSSIER)
     assert df.shape == (1, 5)
     assert df.iloc[0].to_dict() == DOSSIER
+
+
+
+def test_charge_mensuelle_non_finie_rejetee():
+    # un revenu quasi nul fait déborder la division : le prétraitement doit le refuser
+    df = df_valide().astype(float)
+    df.loc[0, "revenu_mensuel"] = 1e-323
+    with pytest.raises(ValueError, match="non finies"):
+        preprocess_data(df)

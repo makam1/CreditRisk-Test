@@ -18,8 +18,9 @@ CHAMPS_OBLIGATOIRES = (
 
 AGE_MIN, AGE_MAX = 18, 100
 DUREE_MIN, DUREE_MAX = 1, 120
-REVENU_MAX = 100_000_000  # FCFA par mois, borne de plausibilité
-MONTANT_MAX = 10_000_000_000  # FCFA, borne de plausibilité
+REVENU_MIN = 1_000
+REVENU_MAX = 100_000_000
+MONTANT_MAX = 10_000_000_000
 
 
 class ErreurValidation(ValueError):
@@ -62,7 +63,12 @@ def valider_dossier(dossier: dict) -> None:
             elif not minimum <= valeur <= maximum:
                 erreurs.append((champ, f"doit être compris entre {minimum} et {maximum}"))
 
-    def verifier_reel(champ: str, strictement_positif: bool, maximum: float | None) -> None:
+    def verifier_reel(
+        champ: str,
+        strictement_positif: bool,
+        minimum: float | None,
+        maximum: float | None,
+    ) -> None:
         if champ in dossier and dossier[champ] is not None:
             valeur = dossier[champ]
             if not _est_reel(valeur):
@@ -73,14 +79,16 @@ def valider_dossier(dossier: dict) -> None:
                 erreurs.append((champ, "doit être strictement positif"))
             elif not strictement_positif and valeur < 0:
                 erreurs.append((champ, "ne peut pas être négatif"))
+            elif minimum is not None and valeur < minimum:
+                erreurs.append((champ, f"est inférieur à la borne de plausibilité ({minimum:,})"))
             elif maximum is not None and valeur > maximum:
                 erreurs.append((champ, f"dépasse la borne de plausibilité ({maximum:,})"))
 
     verifier_entier("age", AGE_MIN, AGE_MAX)
     verifier_entier("duree_mois", DUREE_MIN, DUREE_MAX)
-    verifier_reel("revenu_mensuel", True, REVENU_MAX)
-    verifier_reel("montant_credit", True, MONTANT_MAX)
-    verifier_reel("anciennete_activite", False, None)
+    verifier_reel("revenu_mensuel", True, REVENU_MIN, REVENU_MAX)
+    verifier_reel("montant_credit", True, None, MONTANT_MAX)
+    verifier_reel("anciennete_activite", False, None, None)
 
     if erreurs:
         raise ErreurValidation(erreurs)

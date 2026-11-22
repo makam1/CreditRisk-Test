@@ -55,6 +55,14 @@ def test_revenu_nul_ou_negatif_rejete(revenu):  # T04
     assert champs_en_erreur(avec(revenu_mensuel=revenu)) == {"revenu_mensuel"}
 
 
+@pytest.mark.parametrize("revenu", [1e-323, 1e-300, 0.5, 999])
+def test_revenu_infiniment_petit_rejete(revenu):  # anomalie A01 (trouvée par Hypothesis)
+    assert champs_en_erreur(avec(revenu_mensuel=revenu)) == {"revenu_mensuel"}
+
+
+def test_revenu_minimum_accepte():
+    valider_dossier(avec(revenu_mensuel=1_000))
+
 @pytest.mark.parametrize("montant", [0, -1, -1_000_000])
 def test_montant_nul_ou_negatif_rejete(montant):  # T05
     assert champs_en_erreur(avec(montant_credit=montant)) == {"montant_credit"}
