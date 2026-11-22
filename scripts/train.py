@@ -65,15 +65,23 @@ def construire_pipeline(seed: int = SEED) -> Pipeline:
 
 
 def choisir_seuil(y_val, proba_val, rappel_min: float = RAPPEL_MIN) -> float:
-    """Seuil de précision maximale parmi ceux qui garantissent rappel >= rappel_min (validation)."""
+    """Seuil de précision maximale parmi ceux qui garantissent rappel >= rappel_min (validation).
+
+    precision_recall_curve renvoie une probabilité observée comme seuil : la décision du dossier
+    situé exactement sur ce seuil dépendrait alors du moindre arrondi (anomalie A09). On retourne
+    donc le milieu entre ce seuil et la probabilité observée immédiatement en dessous : mêmes
+    décisions sur la validation, avec une marge de sécurité.
+    """
+    proba_val = np.asarray(proba_val, dtype=float)
     precision, rappel, seuils = precision_recall_curve(y_val, proba_val)
     # precision/rappel ont un point de plus que seuils
     points = zip(precision[:-1], rappel[:-1], seuils, strict=True)
     ok = [(p, t) for p, r, t in points if r >= rappel_min]
     if not ok:
         raise ValueError(f"Aucun seuil n'atteint un rappel de {rappel_min} sur la validation.")
-    return float(max(ok)[1])
-
+    choisi = float(max(ok)[1])
+    en_dessous = proba_val[proba_val < choisi]
+    return float((choisi + en_dessous.max()) / 2) if en_dessous.size else choisi
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -106,7 +114,7 @@ def main() -> None:
         "date_entrainement": datetime.now(UTC).strftime("%Y-%m-%d"),
         "graine": SEED,
         "variables": list(x_train.columns),
-        "seuil": round(seuil, 6),
+        "seuil": seuil,
         "rappel_min_vise": RAPPEL_MIN,
         "metriques_validation": metriques,
         "domaine_entrainement": domaine,

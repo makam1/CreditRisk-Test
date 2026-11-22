@@ -55,14 +55,19 @@ def test_scaler_ajuste_sur_l_entrainement_seulement(modele, donnees):  # T40
 def test_rappel_vise_atteint_sur_la_validation(modele):  # T39
     assert modele.meta["metriques_validation"]["rappel"] >= RAPPEL_MIN
 
-
 def test_metriques_enregistrees_coherentes_avec_un_recalcul(modele, donnees):  # T39
     _train, val, _test = separer(donnees)
     proba = modele.pipeline.predict_proba(preprocess_data(val))[:, 1]
     pred = proba >= modele.seuil
     rappel = (pred & (val[CIBLE] == 1)).sum() / (val[CIBLE] == 1).sum()
-    assert rappel == pytest.approx(modele.meta["metriques_validation"]["rappel"], abs=0.03)
+    assert rappel == pytest.approx(modele.meta["metriques_validation"]["rappel"], abs=1e-4)
+    assert rappel >= RAPPEL_MIN  # anomalie A09 : l'ancien seuil arrondi donnait 0,848
 
+
+def test_aucun_dossier_de_validation_exactement_sur_le_seuil(modele, donnees):  # A09
+    _train, val, _test = separer(donnees)
+    proba = modele.pipeline.predict_proba(preprocess_data(val))[:, 1]
+    assert np.abs(proba - modele.seuil).min() > 1e-6  # décision stable à l'arrondi près
 
 def test_modele_serialise_compatible_avec_les_bibliotheques_installees():
     with warnings.catch_warnings():

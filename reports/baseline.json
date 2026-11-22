@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "cree_le": "2026-11-22",
+  "commit_code": "beb9b9cfa970387eb310d97f4866e578c5de5d6b",
+  "version_reference": "v1",
+  "modele": {
+    "fichier": "models/model_v1.joblib",
+    "sha256": "5838a23d2da88358399a2f80e3ce3ee59aea64ed944ce6467638d6a3408f657b",
+    "seuil": 0.28576679609833744,
+    "variables": [
+      "age",
+      "revenu_mensuel",
+      "montant_credit",
+      "duree_mois",
+      "anciennete_activite",
+      "charge_mensuelle"
+    ]
+  },
+  "jeu_evaluation": {
+    "description": "partition test (20 %, stratifiée) du jeu synthétique, graine 42",
+    "n": 2000,
+    "taux_defaut": 0.135,
+    "empreinte_sha256": "9aa5577a5ee04bb5c173a99a3e07df2840473bb3e82d5c6714fd973c583f2bfb"
+  },
+  "metriques_test": {
+    "n": 2000,
+    "rappel": 0.87037,
+    "precision": 0.232213,
+    "f1": 0.366615,
+    "taux_alerte": 0.506,
+    "vp": 235,
+    "fp": 777,
+    "fn": 35,
+    "vn": 953
+  },
+  "metriques_validation": {
+    "n": 2000,
+    "rappel": 0.851852,
+    "precision": 0.235174,
+    "f1": 0.36859,
+    "taux_alerte": 0.489,
+    "vp": 230,
+    "fp": 748,
+    "fn": 40,
+    "vn": 982
+  },
+  "bibliotheques": {
+    "python": "3.14.4",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.5",
+    "pandas": "3.1.1"
+  },
+  "tolerances": {
+    "baisse_max": {
+      "rappel": [
+        0.02,
+        0.05
+      ],
+      "f1": [
+        0.02,
+        0.05
+      ],
+      "precision": [
+        0.03,
+        0.08
+      ]
+    },
+    "decisions_modifiees_max": [
+      0.05,
+      0.15
+    ],
+    "hausse_suspecte": 0.1,
+    "rappel_validation_min": 0.85,
+    "ecart_integrite": 0.0001
+  }
+}

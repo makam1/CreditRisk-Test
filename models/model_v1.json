@@ -10,7 +10,7 @@
     "anciennete_activite",
     "charge_mensuelle"
   ],
-  "seuil": 0.285868,
+  "seuil": 0.28576679609833744,
   "rappel_min_vise": 0.85,
   "metriques_validation": {
     "rappel": 0.8519,

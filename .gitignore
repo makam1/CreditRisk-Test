@@ -10,3 +10,4 @@ junit.xml
 data/*.csv
 *:Zone.Identifier
 .env
+models/candidats/

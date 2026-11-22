@@ -67,6 +67,10 @@ Système testé : prototype d'estimation du risque de défaut de remboursement p
 |EX17|Les endpoints annexes respectent leur contrat|/health, /model-info, 405, 404 conformes|Supervision impossible|P3|T41, T42|
 |EX18|Les variables sont cohérentes entre elles (ancienneté ≤ âge) | Dossier incohérent rejeté (422) | Score calculé sur un profil impossible | P2 | T43 |
 |EX19|Aucune entrée ne provoque d'erreur interne (500) | Réponse 200 ou 422, jamais 500 | Déni de service, fuite d'information | P1 | T44, T45 |
+|EX20|Le modèle sauvegardé reproduit ses métriques enregistrées et respecte le rappel ≥ 0,85 (validation) | Recalcul strict (±1e-4) et rechargement identique | Artefact livré non conforme à l'exigence | P1 | T46, T47, T54 |
+|EX21|Une nouvelle version n'est acceptée que sans régression au-delà de tolérances fixées à l'avance | Décision ACCEPTER / INVESTIGUER / REJETER | Dégradation silencieuse, déploiement d'un modèle moins bon | P1 | T48, T49, T50, T51, T52 |
+|EX22|La référence est figée et vérifiable | Baseline non écrasable sans --force, empreintes concordantes | Comparaison faite contre une référence qui a bougé | P1 | T53 |
+
 *Justification des seuils (fixés avant toute mesure) :* le rappel de 0,85 est l'objectif pédagogique de l'énoncé, et non une garantie pour une décision de crédit réelle. Le P95 de 200 ms correspond à un outil utilisé en entretien, où un résultat sous la seconde reste fluide et où l'on garde de la marge pour la validation et le réseau.
 
 ## 5\. Cas de test
@@ -120,6 +124,16 @@ Préconditions communes : **P1** = API démarrée, modèle v1 chargé ; **P2** =
 |T43|EX18|P1|age = 20, anciennete_activite = 30 | 422, champ anciennete_activite |
 |T44|EX19|P1|300 corps JSON aléatoires (types, valeurs et structures arbitraires) | 200 ou 422, jamais 500 |
 |T45|EX19|P1|entier de 400 chiffres ; JSON imbriqué sur 100 000 niveaux | 422 |
+|T46|EX20|P1|rappel recalculé sur la validation avec le modèle sauvegardé | ≥ 0,85 et égal aux métriques enregistrées (±1e-4) |
+|T47|EX20|P2|distance entre le seuil et le dossier de validation le plus proche | > 1e-6 (décision stable à l'arrondi) |
+|T48|EX21|P1|candidats reconstruit à l'identique et régularisé | ACCEPTER |
+|T49|EX21|P1|candidat entraîné sur données réduites | INVESTIGUER (rappel −0,033 ; 7,6 % de décisions modifiées) |
+|T50|EX21|P1|candidat avec seuil par défaut 0,5 | REJETER (rappel 0,66) |
+|T51|EX21|P1|candidat sans la variable dérivée ; candidat illisible | REJETER |
+|T52|EX21|P2|bornes des tolérances (inclusives), pire niveau, gain suspect | niveaux attendus |
+|T53|EX22|P1|baseline : refus d'écrasement, empreintes du jeu et du modèle, référence rejouée | conforme |
+|T54|EX20|P2|sauvegarde puis rechargement du pipeline | probabilités strictement identiques |
+
 ## 6\. Critères d'acceptation et de rejet
 
 **Acceptation pour une phase pilote** (toutes les conditions) :

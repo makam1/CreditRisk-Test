@@ -1,0 +1,19 @@
+## Candidat `models/candidats/v2_regularise.joblib` face à la référence v1
+
+**Décision : ACCEPTER.** Aucune régression au-delà des tolérances : le candidat peut être qualifié.
+
+| Contrôle | Référence | Candidat | Écart | Règle | Niveau |
+|---|---|---|---|---|---|
+| contrat : variables du modèle | 6 variables | 6 variables |  | identiques à celles attendues par l'API | ACCEPTER |
+| intégrité : jeu d'évaluation | 9aa5577a5ee0 | 9aa5577a5ee0 |  | empreinte identique à la baseline | ACCEPTER |
+| intégrité : fichier du modèle de référence | 5838a23d2da8 | 5838a23d2da8 |  | empreinte identique à la baseline | ACCEPTER |
+| intégrité : rappel de la référence rejouée | 0.87037 | 0.87037 | +0 | écart ≤ 0.0001 | ACCEPTER |
+| intégrité : precision de la référence rejouée | 0.232213 | 0.232213 | +0 | écart ≤ 0.0001 | ACCEPTER |
+| intégrité : f1 de la référence rejouée | 0.366615 | 0.366615 | +0 | écart ≤ 0.0001 | ACCEPTER |
+| exigence : rappel sur la validation | 0.85 | 0.851852 |  | ≥ 0.85 | ACCEPTER |
+| rappel | 0.87037 | 0.866667 | -0.003703 | baisse ≤ 0.02 accepter ; ≤ 0.05 investiguer ; sinon rejeter | ACCEPTER |
+| f1 | 0.366615 | 0.370253 | +0.003638 | baisse ≤ 0.02 accepter ; ≤ 0.05 investiguer ; sinon rejeter | ACCEPTER |
+| precision | 0.232213 | 0.235412 | +0.003199 | baisse ≤ 0.03 accepter ; ≤ 0.08 investiguer ; sinon rejeter | ACCEPTER |
+| décisions modifiées | 0 | 0.03 | +0.03 | ≤ 5% accepter ; ≤ 15% investiguer ; sinon rejeter | ACCEPTER |
+
+Jeu d'évaluation : partition test (20 %, stratifiée) du jeu synthétique, graine 42 (2000 dossiers, taux de défaut 0.135). Baseline créée le 2026-11-22.
