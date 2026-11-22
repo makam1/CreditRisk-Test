@@ -72,6 +72,9 @@ Système testé : prototype d'estimation du risque de défaut de remboursement p
 |EX22|La référence est figée et vérifiable | Baseline non écrasable sans --force, empreintes concordantes | Comparaison faite contre une référence qui a bougé | P1 | T53 |
 |EX23|Latence et débit tiennent les objectifs du pilote | P95 inférence ≤ 50 ms, P95 API ≤ 200 ms, ≥ 20 req/s à 10 utilisateurs, 0 erreur | Service inutilisable ou erreurs sous charge | P2 | T55, T56, T57 |
 |EX24|La CI bloque toute régression avant fusion | Workflow rouge si Ruff, test, couverture < 85 % ou non-régression échouent | Code défectueux fusionné | P1 | T58, T59 |
+|EX25|Aucun profil (au moins 10 défauts) ne dépasse 30 % de faux négatifs | Rappel équitable entre profils | Décisions faussées pour un profil | P1 | T60, T61 |
+
+
 *Justification des seuils (fixés avant toute mesure) :* le rappel de 0,85 est l'objectif pédagogique de l'énoncé, et non une garantie pour une décision de crédit réelle. Le P95 de 200 ms correspond à un outil utilisé en entretien, où un résultat sous la seconde reste fluide et où l'on garde de la marge pour la validation et le réseau.
 
 ## 5\. Cas de test
@@ -139,6 +142,8 @@ Préconditions communes : **P1** = API démarrée, modèle v1 chargé ; **P2** =
 |T57|EX23|P2|3 utilisateurs simultanés pendant 1 s ; paliers 1 à 50 utilisateurs (script) | 0 erreur, débit ≥ 20 req/s |
 |T58|EX24|P1|pull request avec un test volontairement faux | workflow en échec (croix rouge) |
 |T59|EX24|P1|pull request conforme | workflow vert |
+|T60|EX25|P1|taux de faux négatifs par tranche du jeu de test | aucune tranche > 30 % (échec connu, `xfail` strict, A11) |
+|T61|EX25|P2|calcul des tranches, intervalle de Wilson, couverture, cohérence avec la baseline | conforme |
 
 ## 6\. Critères d'acceptation et de rejet
 
