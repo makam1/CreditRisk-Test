@@ -1,0 +1,83 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0 -- /home/lenovo/CreditRisk-Test/.venv/bin/python3
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/lenovo/CreditRisk-Test
+configfile: pytest.ini
+plugins: hypothesis-6.170.17, anyio-4.16.0, cov-7.1.0
+collecting ... collected 66 items
+
+tests/test_api.py::test_requete_valide PASSED                            [  1%]
+tests/test_api.py::test_champ_obligatoire_absent[age] PASSED             [  3%]
+tests/test_api.py::test_champ_obligatoire_absent[revenu_mensuel] PASSED  [  4%]
+tests/test_api.py::test_champ_obligatoire_absent[montant_credit] PASSED  [  6%]
+tests/test_api.py::test_champ_obligatoire_absent[duree_mois] PASSED      [  7%]
+tests/test_api.py::test_champ_obligatoire_absent[anciennete_activite] PASSED [  9%]
+tests/test_api.py::test_corps_vide PASSED                                [ 10%]
+tests/test_api.py::test_requete_mal_formee_ou_non_objet[{"age": 35,] PASSED [ 12%]
+tests/test_api.py::test_requete_mal_formee_ou_non_objet[pas du json] PASSED [ 13%]
+tests/test_api.py::test_requete_mal_formee_ou_non_objet[] PASSED         [ 15%]
+tests/test_api.py::test_requete_mal_formee_ou_non_objet[[1, 2]] PASSED   [ 16%]
+tests/test_api.py::test_requete_mal_formee_ou_non_objet[null] PASSED     [ 18%]
+tests/test_api.py::test_requete_mal_formee_ou_non_objet["texte"] PASSED  [ 19%]
+tests/test_api.py::test_champ_null[age] PASSED                           [ 21%]
+tests/test_api.py::test_champ_null[revenu_mensuel] PASSED                [ 22%]
+tests/test_api.py::test_champ_null[montant_credit] PASSED                [ 24%]
+tests/test_api.py::test_champ_null[duree_mois] PASSED                    [ 25%]
+tests/test_api.py::test_champ_null[anciennete_activite] PASSED           [ 27%]
+tests/test_api.py::test_age_invalide[-1] PASSED                          [ 28%]
+tests/test_api.py::test_age_invalide[0] PASSED                           [ 30%]
+tests/test_api.py::test_age_invalide[17] PASSED                          [ 31%]
+tests/test_api.py::test_age_invalide[101] PASSED                         [ 33%]
+tests/test_api.py::test_age_aux_limites[18] PASSED                       [ 34%]
+tests/test_api.py::test_age_aux_limites[100] PASSED                      [ 36%]
+tests/test_api.py::test_revenu_texte[abc] PASSED                         [ 37%]
+tests/test_api.py::test_revenu_texte[250000] PASSED                      [ 39%]
+tests/test_api.py::test_revenu_texte[True] PASSED                        [ 40%]
+tests/test_api.py::test_montant_nul_ou_negatif[0] PASSED                 [ 42%]
+tests/test_api.py::test_montant_nul_ou_negatif[-1] PASSED                [ 43%]
+tests/test_api.py::test_montant_nul_ou_negatif[-1000000] PASSED          [ 45%]
+tests/test_api.py::test_duree_invalide[12.5] PASSED                      [ 46%]
+tests/test_api.py::test_duree_invalide[12] PASSED                        [ 48%]
+tests/test_api.py::test_duree_invalide[0] PASSED                         [ 50%]
+tests/test_api.py::test_duree_invalide[121] PASSED                       [ 51%]
+tests/test_api.py::test_duree_invalide[-6] PASSED                        [ 53%]
+tests/test_api.py::test_duree_aux_limites[1] PASSED                      [ 54%]
+tests/test_api.py::test_duree_aux_limites[120] PASSED                    [ 56%]
+tests/test_api.py::test_champ_supplementaire_refuse PASSED               [ 57%]
+tests/test_api.py::test_valeurs_extremement_elevees_rejetees[revenu_mensuel-1e+308] PASSED [ 59%]
+tests/test_api.py::test_valeurs_extremement_elevees_rejetees[montant_credit-1e+20] PASSED [ 60%]
+tests/test_api.py::test_valeur_elevee_mais_plausible_acceptee_avec_avertissement PASSED [ 62%]
+tests/test_api.py::test_valeurs_non_finies_rejetees[NaN] PASSED          [ 63%]
+tests/test_api.py::test_valeurs_non_finies_rejetees[Infinity] PASSED     [ 65%]
+tests/test_api.py::test_valeurs_non_finies_rejetees[-Infinity] PASSED    [ 66%]
+tests/test_api.py::test_hors_domaine_signale PASSED                      [ 68%]
+tests/test_api.py::test_erreur_422_ne_repete_pas_les_valeurs_envoyees PASSED [ 69%]
+tests/test_api.py::test_erreur_422_sans_trace_technique PASSED           [ 71%]
+tests/test_api.py::test_health PASSED                                    [ 72%]
+tests/test_api.py::test_model_info PASSED                                [ 74%]
+tests/test_api.py::test_le_seuil_expose_est_celui_utilise_par_predict PASSED [ 75%]
+tests/test_api.py::test_methode_non_autorisee[get-/predict] PASSED       [ 77%]
+tests/test_api.py::test_methode_non_autorisee[post-/health] PASSED       [ 78%]
+tests/test_api.py::test_route_inconnue PASSED                            [ 80%]
+tests/test_api.py::test_sans_modele_health_503 PASSED                    [ 81%]
+tests/test_api.py::test_sans_modele_predict_503 PASSED                   [ 83%]
+tests/test_api.py::test_sans_modele_model_info_503 PASSED                [ 84%]
+tests/test_api.py::test_demarrage_avec_fichier_modele_absent PASSED      [ 86%]
+tests/test_api.py::test_seuil_configure_change_la_classe_pas_la_probabilite PASSED [ 87%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[0] PASSED    [ 89%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[1] PASSED    [ 90%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[-0.2] PASSED [ 92%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[1.5] PASSED  [ 93%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[nan] PASSED  [ 95%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[inf] PASSED  [ 96%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[abc] PASSED  [ 98%]
+tests/test_api.py::test_seuil_invalide_empeche_le_demarrage[] PASSED     [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/lenovo/CreditRisk-Test/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 66 passed, 1 warning in 22.79s ========================
