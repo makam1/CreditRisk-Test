@@ -139,7 +139,7 @@ async def predict(request: Request):
 
     try:
         dossier = await request.json()
-    except (json.JSONDecodeError, UnicodeDecodeError):
+    except (json.JSONDecodeError, UnicodeDecodeError, RecursionError):
         logger.info("Requête rejetée : JSON mal formé")
         return reponse_erreur(
             422, "Corps de requête invalide.", [{"champ": "corps", "message": "JSON mal formé"}]

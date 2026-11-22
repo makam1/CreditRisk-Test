@@ -2,8 +2,8 @@
 
 Règles (voir reports/plan_de_test.md) : 5 champs obligatoires, aucun champ en trop,
 types stricts (pas de conversion silencieuse : "250000" et True sont rejetés),
-valeurs finies, intervalles autorisés. Le dossier reçu n'est jamais modifié.
-"""
+valeurs finies, intervalles autorisés, cohérence ancienneté <= âge.
+Le dossier reçu n'est jamais modifié."""
 
 import math
 from numbers import Integral, Real
@@ -73,7 +73,7 @@ def valider_dossier(dossier: dict) -> None:
             valeur = dossier[champ]
             if not _est_reel(valeur):
                 erreurs.append((champ, "doit être numérique"))
-            elif not math.isfinite(valeur):
+            elif not isinstance(valeur, Integral) and not math.isfinite(valeur):
                 erreurs.append((champ, "doit être fini (ni NaN, ni infini)"))
             elif strictement_positif and valeur <= 0:
                 erreurs.append((champ, "doit être strictement positif"))
@@ -89,6 +89,12 @@ def valider_dossier(dossier: dict) -> None:
     verifier_reel("revenu_mensuel", True, REVENU_MIN, REVENU_MAX)
     verifier_reel("montant_credit", True, None, MONTANT_MAX)
     verifier_reel("anciennete_activite", False, None, None)
+
+    # cohérence entre variables : on ne peut pas exercer une activité plus d'années qu'on n'a vécu
+    en_erreur = {champ for champ, _ in erreurs}
+    if not en_erreur & {"age", "anciennete_activite"}:
+        if dossier["anciennete_activite"] > dossier["age"]:
+            erreurs.append(("anciennete_activite", "ne peut pas dépasser l'âge"))
 
     if erreurs:
         raise ErreurValidation(erreurs)

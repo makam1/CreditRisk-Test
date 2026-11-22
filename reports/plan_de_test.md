@@ -40,7 +40,7 @@ Système testé : prototype d'estimation du risque de défaut de remboursement p
 |POST /predict|Erreur interne|500|Message générique, sans trace, chemin ni nom de classe|
 |Autre méthode ou route|GET /predict, route inconnue|405 / 404|Erreur standard|
 
-**Règles de validation :** `age` entier de 18 à 100 ; montant\_credit numérique fini strictement positif ; revenu\_mensuel numérique fini entre 1 000 et 100 000 000 FCFA ; `duree\_mois` entier de 1 à 120 ; `anciennete\_activite` numérique fini supérieur ou égal à 0 ; les 5 champs sont obligatoires ; aucun champ supplémentaire ; **pas de conversion silencieuse** (la chaîne "250000" est rejetée, comme les booléens). Bornes de plausibilité : revenu de 1 000 à 100 000 000 FCFA par mois, montant au plus 10 000 000 000 FCFA.
+**Règles de validation :** `age` entier de 18 à 100 ; montant\_credit numérique fini strictement positif ; revenu\_mensuel numérique fini entre 1 000 et 100 000 000 FCFA ; `duree\_mois` entier de 1 à 120 ; `anciennete\_activite` numérique fini supérieur ou égal à 0 ; les 5 champs sont obligatoires ; aucun champ supplémentaire ; **pas de conversion silencieuse** (la chaîne "250000" est rejetée, comme les booléens). Bornes de plausibilité : revenu de 1 000 à 100 000 000 FCFA par mois, montant au plus 10 000 000 000 FCFA; ancienneté ≤ âge (cohérence entre variables).
 
 **Entrée inhabituelle mais valide** (hors de la plage d'entraînement : âge supérieur à 70, durée supérieure à 48 mois, etc.) : traitée (200) avec un **avertissement**, pas rejetée.
 
@@ -65,7 +65,8 @@ Système testé : prototype d'estimation du risque de défaut de remboursement p
 |EX15|La latence respecte l'objectif|P95 de /predict inférieur ou égal à 200 ms en local, 0 erreur en charge progressive|Outil inutilisable en entretien client|P2|T37, T38|
 |EX16|Le modèle atteint la qualité minimale sans fuite de données|Rappel du défaut supérieur ou égal à 0,85 (validation), cible hors variables d'entrée, scaler ajusté sur l'entraînement|Défauts non détectés, surévaluation|P1|T39, T40|
 |EX17|Les endpoints annexes respectent leur contrat|/health, /model-info, 405, 404 conformes|Supervision impossible|P3|T41, T42|
-
+|EX18|Les variables sont cohérentes entre elles (ancienneté ≤ âge) | Dossier incohérent rejeté (422) | Score calculé sur un profil impossible | P2 | T43 |
+|EX19|Aucune entrée ne provoque d'erreur interne (500) | Réponse 200 ou 422, jamais 500 | Déni de service, fuite d'information | P1 | T44, T45 |
 *Justification des seuils (fixés avant toute mesure) :* le rappel de 0,85 est l'objectif pédagogique de l'énoncé, et non une garantie pour une décision de crédit réelle. Le P95 de 200 ms correspond à un outil utilisé en entretien, où un résultat sous la seconde reste fluide et où l'on garde de la marge pour la validation et le réseau.
 
 ## 5\. Cas de test
@@ -116,7 +117,9 @@ Préconditions communes : **P1** = API démarrée, modèle v1 chargé ; **P2** =
 |T40|EX16|P1|inspection des variables d'entrée et du scaler|`defaut` absent des variables, scaler ajusté sur l'entraînement seul|
 |T41|EX17|P1|GET /health, GET /model-info|200 et contenu conforme|
 |T42|EX17|P1|GET /predict, GET /inconnu|405, 404|
-
+|T43|EX18|P1|age = 20, anciennete_activite = 30 | 422, champ anciennete_activite |
+|T44|EX19|P1|300 corps JSON aléatoires (types, valeurs et structures arbitraires) | 200 ou 422, jamais 500 |
+|T45|EX19|P1|entier de 400 chiffres ; JSON imbriqué sur 100 000 niveaux | 422 |
 ## 6\. Critères d'acceptation et de rejet
 
 **Acceptation pour une phase pilote** (toutes les conditions) :

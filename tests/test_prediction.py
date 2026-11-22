@@ -81,7 +81,7 @@ dossiers_valides = st.fixed_dictionaries(
             min_value=0, max_value=10_000_000_000, exclude_min=True, allow_nan=False
         ),
         "duree_mois": st.integers(1, 120),
-        "anciennete_activite": st.floats(min_value=0, max_value=60, allow_nan=False),
+        "anciennete_activite": st.floats(min_value=0, max_value=18, allow_nan=False),  # <= age
     }
 )
 

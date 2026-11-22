@@ -154,3 +154,21 @@ def test_le_validateur_ne_modifie_pas_le_dossier():
 def test_erreur_validation_est_une_valueerror_lisible():
     with pytest.raises(ValueError, match="age"):
         valider_dossier(avec(age=17))
+
+
+
+@pytest.mark.parametrize("champ", ["revenu_mensuel", "montant_credit", "anciennete_activite"])
+def test_entier_gigantesque_rejete_sans_planter(champ):  # anomalie A03 (trouvée par fuzzing)
+    assert champs_en_erreur(avec(**{champ: 10**400})) == {champ}
+
+
+def test_anciennete_superieure_a_l_age_rejetee():  # anomalie A04 (cohérence entre variables)
+    assert champs_en_erreur(avec(age=20, anciennete_activite=30)) == {"anciennete_activite"}
+
+
+def test_anciennete_egale_a_l_age_acceptee():
+    valider_dossier(avec(age=20, anciennete_activite=20))
+
+
+def test_incoherence_non_signalee_quand_l_age_est_deja_invalide():
+    assert champs_en_erreur(avec(age=10, anciennete_activite=30)) == {"age"}
