@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "cree_le": "2026-11-22",
-  "commit_code": "beb9b9cfa970387eb310d97f4866e578c5de5d6b",
+  "commit_code": "19f965c6082c88e931c6c1fc64c3591330c591af",
   "version_reference": "v1",
   "modele": {
     "fichier": "models/model_v1.joblib",
-    "sha256": "5838a23d2da88358399a2f80e3ce3ee59aea64ed944ce6467638d6a3408f657b",
+    "empreinte_parametres": "7a990f9004e1526f98c0ad8611eea2aa596340f2549ad4976bb7942818fea771",
     "seuil": 0.28576679609833744,
     "variables": [
       "age",

@@ -1,0 +1,120 @@
+{
+  "configuration": {
+    "machine": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "processeurs": 8,
+    "python": "3.14.4",
+    "scikit-learn": "1.9.1",
+    "serveur": "uvicorn, 1 worker, 127.0.0.1 (client et serveur sur la même machine)",
+    "client": "http.client, connexions persistantes, 1 thread par utilisateur"
+  },
+  "inference": {
+    "n": 500,
+    "moyenne_ms": 2.09,
+    "p50_ms": 2.02,
+    "p95_ms": 2.44,
+    "p99_ms": 2.72,
+    "max_ms": 4.42
+  },
+  "api_memoire": {
+    "n": 300,
+    "moyenne_ms": 5.65,
+    "p50_ms": 5.5,
+    "p95_ms": 6.88,
+    "p99_ms": 7.48,
+    "max_ms": 8.89
+  },
+  "paliers": [
+    {
+      "n": 1264,
+      "moyenne_ms": 3.16,
+      "p50_ms": 3.02,
+      "p95_ms": 4.09,
+      "p99_ms": 5.39,
+      "max_ms": 21.06,
+      "utilisateurs": 1,
+      "debit_rps": 315.9,
+      "erreurs": 0
+    },
+    {
+      "n": 1260,
+      "moyenne_ms": 6.35,
+      "p50_ms": 6.12,
+      "p95_ms": 8.53,
+      "p99_ms": 9.88,
+      "max_ms": 12.83,
+      "utilisateurs": 2,
+      "debit_rps": 314.5,
+      "erreurs": 0
+    },
+    {
+      "n": 1191,
+      "moyenne_ms": 16.81,
+      "p50_ms": 16.12,
+      "p95_ms": 21.55,
+      "p99_ms": 25.59,
+      "max_ms": 40.35,
+      "utilisateurs": 5,
+      "debit_rps": 296.8,
+      "erreurs": 0
+    },
+    {
+      "n": 1262,
+      "moyenne_ms": 31.79,
+      "p50_ms": 30.5,
+      "p95_ms": 35.97,
+      "p99_ms": 37.66,
+      "max_ms": 575.91,
+      "utilisateurs": 10,
+      "debit_rps": 313.1,
+      "erreurs": 0
+    },
+    {
+      "n": 1313,
+      "moyenne_ms": 61.36,
+      "p50_ms": 58.25,
+      "p95_ms": 70.8,
+      "p99_ms": 153.62,
+      "max_ms": 1337.47,
+      "utilisateurs": 20,
+      "debit_rps": 322.6,
+      "erreurs": 0
+    },
+    {
+      "n": 1294,
+      "moyenne_ms": 156.37,
+      "p50_ms": 154.58,
+      "p95_ms": 180.98,
+      "p99_ms": 195.03,
+      "max_ms": 232.93,
+      "utilisateurs": 50,
+      "debit_rps": 312.0,
+      "erreurs": 0
+    }
+  ],
+  "objectifs": [
+    {
+      "objectif": "Latence d'inférence P95",
+      "mesure": 2.44,
+      "seuil": 50.0,
+      "tenu": true
+    },
+    {
+      "objectif": "API /predict P95 (≤ 10 utilisateurs)",
+      "mesure": 35.97,
+      "seuil": 200.0,
+      "tenu": true
+    },
+    {
+      "objectif": "Débit à 10 utilisateurs (req/s)",
+      "mesure": 313.1,
+      "seuil": 20.0,
+      "tenu": true
+    },
+    {
+      "objectif": "Erreurs (≤ 10 utilisateurs)",
+      "mesure": 0,
+      "seuil": 0,
+      "tenu": true
+    }
+  ]
+}

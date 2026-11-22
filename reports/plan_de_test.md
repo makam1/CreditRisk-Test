@@ -70,7 +70,8 @@ Système testé : prototype d'estimation du risque de défaut de remboursement p
 |EX20|Le modèle sauvegardé reproduit ses métriques enregistrées et respecte le rappel ≥ 0,85 (validation) | Recalcul strict (±1e-4) et rechargement identique | Artefact livré non conforme à l'exigence | P1 | T46, T47, T54 |
 |EX21|Une nouvelle version n'est acceptée que sans régression au-delà de tolérances fixées à l'avance | Décision ACCEPTER / INVESTIGUER / REJETER | Dégradation silencieuse, déploiement d'un modèle moins bon | P1 | T48, T49, T50, T51, T52 |
 |EX22|La référence est figée et vérifiable | Baseline non écrasable sans --force, empreintes concordantes | Comparaison faite contre une référence qui a bougé | P1 | T53 |
-
+|EX23|Latence et débit tiennent les objectifs du pilote | P95 inférence ≤ 50 ms, P95 API ≤ 200 ms, ≥ 20 req/s à 10 utilisateurs, 0 erreur | Service inutilisable ou erreurs sous charge | P2 | T55, T56, T57 |
+|EX24|La CI bloque toute régression avant fusion | Workflow rouge si Ruff, test, couverture < 85 % ou non-régression échouent | Code défectueux fusionné | P1 | T58, T59 |
 *Justification des seuils (fixés avant toute mesure) :* le rappel de 0,85 est l'objectif pédagogique de l'énoncé, et non une garantie pour une décision de crédit réelle. Le P95 de 200 ms correspond à un outil utilisé en entretien, où un résultat sous la seconde reste fluide et où l'on garde de la marge pour la validation et le réseau.
 
 ## 5\. Cas de test
@@ -133,6 +134,11 @@ Préconditions communes : **P1** = API démarrée, modèle v1 chargé ; **P2** =
 |T52|EX21|P2|bornes des tolérances (inclusives), pire niveau, gain suspect | niveaux attendus |
 |T53|EX22|P1|baseline : refus d'écrasement, empreintes du jeu et du modèle, référence rejouée | conforme |
 |T54|EX20|P2|sauvegarde puis rechargement du pipeline | probabilités strictement identiques |
+|T55|EX23|P2|500 appels à `predire` | P95 ≤ 50 ms |
+|T56|EX23|P2|100 appels HTTP en mémoire à /predict | P95 ≤ 200 ms |
+|T57|EX23|P2|3 utilisateurs simultanés pendant 1 s ; paliers 1 à 50 utilisateurs (script) | 0 erreur, débit ≥ 20 req/s |
+|T58|EX24|P1|pull request avec un test volontairement faux | workflow en échec (croix rouge) |
+|T59|EX24|P1|pull request conforme | workflow vert |
 
 ## 6\. Critères d'acceptation et de rejet
 

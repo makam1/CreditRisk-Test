@@ -66,9 +66,19 @@ def empreinte(df: pd.DataFrame) -> str:
     return hashlib.sha256(df.to_csv().encode("utf-8")).hexdigest()
 
 
-def empreinte_fichier(chemin: Path) -> str:
-    return hashlib.sha256(Path(chemin).read_bytes()).hexdigest()
+def empreinte_modele(pipeline) -> str:
+    """Empreinte des PARAMÈTRES du modèle (et non des octets du fichier).
 
+    Deux fichiers joblib peuvent différer octet par octet (ordre de sérialisation, compression)
+    tout en contenant exactement le même modèle : seule la valeur des paramètres compte.
+    """
+    h = hashlib.sha256()
+    for etape in (pipeline[0], pipeline[-1]):
+        for nom in ("mean_", "scale_", "coef_", "intercept_"):
+            if hasattr(etape, nom):
+                valeurs = np.round(np.asarray(getattr(etape, nom), dtype=np.float64), 9)
+                h.update(nom.encode() + valeurs.tobytes())
+    return h.hexdigest()
 
 def evaluer(pipeline, seuil: float, df: pd.DataFrame) -> tuple[dict, np.ndarray]:
     """Métriques de classification et décisions (booléens) d'un modèle sur un jeu."""
@@ -139,7 +149,7 @@ def creer_baseline(
         "version_reference": modele.version,
         "modele": {
             "fichier": Path(chemin_modele).as_posix(),
-            "sha256": empreinte_fichier(chemin_modele),
+            "empreinte_parametres": empreinte_modele(modele.pipeline),
             "seuil": modele.seuil,
             "variables": modele.meta["variables"],
         },
@@ -241,11 +251,20 @@ def controles_integrite(baseline: dict, val_test: pd.DataFrame, modele_ref) -> l
             else INVESTIGUER,
         ),
         _controle(
-            "intégrité : fichier du modèle de référence",
-            ref["sha256"][:12],
-            empreinte_fichier(ref["fichier"])[:12],
-            "empreinte identique à la baseline",
-            ACCEPTER if empreinte_fichier(ref["fichier"]) == ref["sha256"] else INVESTIGUER,
+            "intégrité : paramètres du modèle de référence",
+            ref["empreinte_parametres"][:12],
+            empreinte_modele(modele_ref.pipeline)[:12],
+            "empreinte des paramètres identique à la baseline",
+            ACCEPTER
+            if empreinte_modele(modele_ref.pipeline) == ref["empreinte_parametres"]
+            else INVESTIGUER,
+        ),
+        _controle(
+            "intégrité : seuil du modèle de référence",
+            ref["seuil"],
+            modele_ref.seuil,
+            "identique à la baseline",
+            ACCEPTER if modele_ref.seuil == ref["seuil"] else INVESTIGUER,
         ),
     ]
     for nom in ("rappel", "precision", "f1"):

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Ruff
+        run: ruff check .
+
+      - name: Tests avec couverture
+        run: pytest --cov=app --cov-report=term-missing --cov-report=xml --cov-fail-under=85
+
+      - name: Non-régression (modèle de référence contre la baseline figée)
+        run: python -m scripts.regression compare --candidat models/model_v1.joblib
+
+      - name: Conserver le rapport de couverture
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: couverture
+          path: coverage.xml

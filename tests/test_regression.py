@@ -1,6 +1,7 @@
 """Tests de non-régression (Activité 5) : référence figée, tolérances, détection de dégradations,
 cohérence de la sauvegarde et du rechargement du modèle."""
 
+import copy
 import json
 from pathlib import Path
 
@@ -8,7 +9,7 @@ import joblib
 import numpy as np
 import pytest
 
-from app.prediction import charger_modele
+from app.prediction import Modele, charger_modele
 from app.preprocessing import CIBLE, VARIABLES_MODELE, preprocess_data
 from scripts import regression as reg
 from scripts.candidats import construire_candidats, ecrire
@@ -83,8 +84,8 @@ def test_la_reference_rejouee_redonne_la_baseline(baseline, jeux, reference):
     metriques, _ = reg.evaluer(reference.pipeline, reference.seuil, test)
     for nom in ("rappel", "precision", "f1", "vp", "fp", "fn", "vn"):
         assert metriques[nom] == pytest.approx(baseline["metriques_test"][nom], abs=1e-4)
-    assert reg.empreinte_fichier(reg.CHEMIN_REFERENCE) == baseline["modele"]["sha256"]
-
+    assert reg.empreinte_modele(reference.pipeline) == baseline["modele"]["empreinte_parametres"]
+    assert reference.seuil == baseline["modele"]["seuil"]
 
 # ---------- règles de décision (tolérances) ----------
 
@@ -206,6 +207,22 @@ def test_candidat_illisible_rejete(tmp_path):
     (tmp_path / "x.json").write_text("{}", encoding="utf-8")
     assert reg.comparer(tmp_path / "x.joblib")["decision"] == REJETER
 
+def test_fichier_reecrit_sans_changer_les_parametres_reste_accepte(reference, tmp_path):
+    """Des octets différents ne sont pas une régression : seuls les paramètres comptent."""
+    copie = tmp_path / "copie.joblib"
+    joblib.dump(reference.pipeline, copie, compress=3)
+    assert copie.read_bytes() != reg.CHEMIN_REFERENCE.read_bytes()
+    assert reg.empreinte_modele(joblib.load(copie)) == reg.empreinte_modele(reference.pipeline)
+
+
+def test_modele_de_reference_modifie_est_detecte(baseline, jeux, reference):
+    _val, test = jeux
+    modifie = copy.deepcopy(reference.pipeline)
+    modifie[-1].coef_ = modifie[-1].coef_ * 1.01  # un seul paramètre légèrement changé
+    candidat = Modele(pipeline=modifie, meta=reference.meta)
+    controles = reg.controles_integrite(baseline, test, candidat)
+    niveaux = {c["controle"]: c["niveau"] for c in controles}
+    assert niveaux["intégrité : paramètres du modèle de référence"] == INVESTIGUER
 
 def test_jeu_d_evaluation_modifie_rend_la_comparaison_douteuse(baseline, jeux, reference, tmp_path):
     _val, test = jeux
